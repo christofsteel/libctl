@@ -24,11 +24,10 @@ class PrintAlgebra
     {
       case (CTL::_and):
       {
-        const And* self = static_cast<const And*>(phi);
         std::cout << "(";
-        PrintAlgebra::evaluate(self->phi);
+        PrintAlgebra::evaluate(phi->phi);
         std::cout << " && ";
-        PrintAlgebra::evaluate(self->psi);
+        PrintAlgebra::evaluate(phi->psi);
         std::cout << ")";
       }
       break;
@@ -39,17 +38,15 @@ class PrintAlgebra
       break;
       case (CTL::_not):
       {
-        const Not* self = static_cast<const Not*>(phi);
         std::cout << "!(";
-        PrintAlgebra::evaluate(self->phi);
+        PrintAlgebra::evaluate(phi->phi);
         std::cout << ")";
       }
       break;
       case (CTL::var):
       {
-        const Var* self = static_cast<const Var*>(phi);
         std::cout << "VAR(";
-        switch (self->statement)
+        switch (phi->statement)
         {
           case (Statement::A):
             std::cout << "A";
@@ -61,7 +58,7 @@ class PrintAlgebra
             std::cout << "C";
             break;
           default:
-            std::cout << self->statement;
+            std::cout << phi->statement;
             break;
         }
         std::cout << ")";
@@ -69,27 +66,24 @@ class PrintAlgebra
       break;
       case (CTL::ex):
       {
-        const Ex* self = static_cast<const Ex*>(phi);
         std::cout << "EX(";
-        PrintAlgebra::evaluate(self->phi);
+        PrintAlgebra::evaluate(phi->phi);
         std::cout << ")";
       }
       break;
       case (CTL::eu):
       {
-        const Eu* self = static_cast<const Eu*>(phi);
         std::cout << "E[";
-        PrintAlgebra::evaluate(self->phi);
+        PrintAlgebra::evaluate(phi->phi);
         std::cout << " U ";
-        PrintAlgebra::evaluate(self->psi);
+        PrintAlgebra::evaluate(phi->psi);
         std::cout << "]";
       }
       break;
       case (CTL::af):
       {
-        const Af* self = static_cast<const Af*>(phi);
         std::cout << "AF(";
-        PrintAlgebra::evaluate(self->phi);
+        PrintAlgebra::evaluate(phi->phi);
         std::cout << ")";
       }
       break;

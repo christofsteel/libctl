@@ -13,14 +13,14 @@ class State
  public:
   int id;
   std::set<Statement> statements;
-  std::set<State*> children;
+  std::set<State*> successors;
   State(std::set<Statement> statements) : id(max_id++), statements(statements){};
-  void add_sibl(State* s) { this->children.insert(s); }
+  void add_sibl(State* s) { this->successors.insert(s); }
   inline const bool operator<(const State& other) { return this->id < other.id; }
   void print() const
   {
     std::cout << this->id << ":";
-    for (const State* s : this->children)
+    for (const State* s : this->successors)
     {
       std::cout << " " << s->id;
     }

@@ -34,27 +34,28 @@
 
 #pragma once
 #include "statement.h"
+#include <vector>
 
 // The following macros hide the allocation on the heap and calculate the
 // TRANSLATE function, so every CTL formula can be represented by the operators
 // FALSE, AND, AF, EU, EX and NOT.
 
-#define FALSE new _False()
-#define AND(x, y) new And(x, y)
-#define NOT(x) new Not(x)
-#define VAR(x) new Var(x)
-#define EX(x) new Ex(x)
-#define EU(x, y) new Eu(x, u)
-#define AF(x) new Af(x)
+#define FALSE new CTL(CTL::_false)
+#define AND(x, y) new CTL(CTL::_and, x, y)
+#define NOT(x) new CTL(CTL::_not, x)
+#define VAR(x) new CTL(CTL::var, x)
+#define EX(x) new CTL(CTL::ex, x)
+#define EU(x, y) new CTL(CTL::eu, x, y)
+#define AF(x) new CTL(CTL::af, x)
 
 // TRANSLATE
-#define TRUE new Not(new _False())
-#define EG(x) new Not(new Af(new Not(x)))
-#define EF(x) new Eu(new _True(), x)
-#define AX(x) new Not(new Ex(new Not(x)))
-#define OR(x, y) new Not(new And(new Not(x), new Not(y)))
-#define AG(x) new Not(new Eu(new _True(), new Not(x)))
-#define AU(x, y) new And(new Not(new Eu(new Not(y), new And(new Not(x), new Not(y))), new Af(x)))
+#define TRUE NOT(FALSE)
+#define EG(x) NOT(AF(NOT(x)))
+#define EF(x) EU(TRUE,x)
+#define AX(x) NOT(EX(NOT(x)))
+#define OR(x, y) NOT(AND(NOT(x), NOT(y)))
+#define AG(x) NOT(EU(TRUE,NOT(x)))
+#define AU(x, y) AND(NOT(EU(NOT(y), AND(NOT(x), NOT(y)))),AF(y))
 
 
 class CTL
@@ -67,13 +68,13 @@ class CTL
    */
   enum Type
   {
-    _and,
-    _false,
-    _not,
-    var,
-    ex,
-    eu,
-    af,
+    _false = 0,
+    _not = 1,
+    var = 2,
+    ex = 3,
+    af = 4,
+    _and = 5,
+    eu = 6,
 
     //     _or,
     //     _true,
@@ -83,12 +84,18 @@ class CTL
     //     ag,
     //     au
   };
+  const CTL* phi;
+  const CTL* psi;
+  const Statement statement;
   const Type type;
-  CTL(const Type type) : type(type) {}
+  CTL(const Type type) : phi(0), psi(0), statement(NO_STATEMENT), type(type) {}
+  CTL(const Type type, const CTL* iphi) : phi(iphi), psi(0), statement(NO_STATEMENT), type(type) {}
+  CTL(const Type type, const Statement s) : phi(0), psi(0), statement(s), type(type) {}
+  CTL(const Type type, const CTL* iphi, const CTL* ipsi) : phi(iphi), psi(ipsi), statement(NO_STATEMENT), type(type) {}
   void print() const;
-  virtual ~CTL()
-  {  // The destructor has to be virtual, so the operators can overwrite it.
-  }
+  bool operator==(const CTL& o) const;
+  bool operator<(const CTL& o) const;
+  bool in(const std::vector<CTL> list) const;
 };
 
 
@@ -96,7 +103,7 @@ class CTL
  * Definition of all CTL operators as a class to emulate the sum type CTL.
  * To seperate the types at runtime, we save a type inside the CTL object.
  */
-
+/*
 class And : public CTL
 {
  public:
@@ -122,6 +129,8 @@ class Not : public CTL
 {
  public:
   const CTL* phi;
+  Not(const Not& p) : phi(p.phi), CTL(CTL::_not) {
+  }
   Not(const CTL* iphi) : phi(iphi), CTL(CTL::_not) {}
   ~Not() { delete phi; }
 };
@@ -163,7 +172,7 @@ class Af : public CTL
   Af(const CTL* phi) : phi(phi), CTL(CTL::af) {}
   ~Af() { delete phi; }
 };
-
+*/
 /*
 // We define the missing connectives in case we need them later. Although I
 // doubt it

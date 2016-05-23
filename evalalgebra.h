@@ -11,21 +11,6 @@
 class EvalAlgebra
 {
  public:
-  /*
-  bool evaluate(const CTL& phi, const State& init)
-  {
-    std::map< const State&, std::set<const CTL&>& > labels;
-    evaluate_(phi, init, labels);
-    std::cout << "Labels: " << std::endl;
-    for(const State& s: this->states) {
-      std::cout << "State: " << s.id << " ";
-      for(const CTL& label: labels[s]) {
-
-      }
-    }
-    return labels[init].find(phi) != labels[init].end();
-  }
-  */
   static bool evaluate(const CTL& phi, const State& init, const std::set<State>& states)
   {
     std::map<int, std::vector<CTL> > labels;
@@ -95,6 +80,10 @@ class EvalAlgebra
             change = false;
             for (const State& s : states)
             {
+              if (phi.in(labels[s.id]))
+              {
+                continue;
+              }
               bool all_labeled_af = true;
               for (const State* succ_s : s.successors)
               {
@@ -115,8 +104,10 @@ class EvalAlgebra
       case (CTL::eu):
         EvalAlgebra::evaluate_(*phi.phi, states, labels);
         EvalAlgebra::evaluate_(*phi.psi, states, labels);
-        for(const State& s: states) {
-          if(phi.psi->in(labels[s.id])) {
+        for (const State& s : states)
+        {
+          if (phi.psi->in(labels[s.id]))
+          {
             labels[s.id].push_back(phi);
           }
         }
@@ -127,7 +118,8 @@ class EvalAlgebra
             change = false;
             for (const State& s : states)
             {
-              if(!phi.phi->in(labels[s.id])) {
+              if (!phi.phi->in(labels[s.id]) || phi.in(labels[s.id]))
+              {
                 continue;
               }
               bool one_labeled_eu = false;
@@ -149,9 +141,12 @@ class EvalAlgebra
         break;
       case (CTL::ex):
         EvalAlgebra::evaluate_(*phi.phi, states, labels);
-        for(const State& s: states) {
-          for(const State* succ_s: s.successors) {
-            if(phi.phi->in(labels[succ_s->id])) {
+        for (const State& s : states)
+        {
+          for (const State* succ_s : s.successors)
+          {
+            if (phi.phi->in(labels[succ_s->id]))
+            {
               labels[s.id].push_back(phi);
               break;
             }

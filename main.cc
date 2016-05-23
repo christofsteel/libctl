@@ -25,7 +25,7 @@ int main(void)
 
   std::set<State> states {s1, s2, s3, s4, s5};
 
-  CTL* p = EX(AND(TRUE,NOT(VAR(A)))); //AU(NOT(TRUE), FALSE); //AND(OR(TRUE, FALSE), TRUE);
+  CTL* p = AG(VAR(A)); //AU(NOT(TRUE), FALSE); //AND(OR(TRUE, FALSE), TRUE);
   CTL* q = AND(OR(TRUE, FALSE), FALSE);
   PrintAlgebra::evaluate(p);
   std::cout << std::endl;

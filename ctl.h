@@ -33,8 +33,8 @@
  */
 
 #pragma once
-#include "statement.h"
 #include <vector>
+#include "statement.h"
 
 // The following macros hide the allocation on the heap and calculate the
 // TRANSLATE function, so every CTL formula can be represented by the operators
@@ -51,11 +51,11 @@
 // TRANSLATE
 #define TRUE NOT(FALSE)
 #define EG(x) NOT(AF(NOT(x)))
-#define EF(x) EU(TRUE,x)
+#define EF(x) EU(TRUE, x)
 #define AX(x) NOT(EX(NOT(x)))
 #define OR(x, y) NOT(AND(NOT(x), NOT(y)))
-#define AG(x) NOT(EU(TRUE,NOT(x)))
-#define AU(x, y) AND(NOT(EU(NOT(y), AND(NOT(x), NOT(y)))),AF(y))
+#define AG(x) NOT(EU(TRUE, NOT(x)))
+#define AU(x, y) AND(NOT(EU(NOT(y), AND(NOT(x), NOT(y)))), AF(y))
 
 
 class CTL

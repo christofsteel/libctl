@@ -1,10 +1,10 @@
 #pragma once
 #include <iostream>
 #include <set>
-#include "ctl.h"
 #include "statement.h"
 
-
+namespace CTL
+{
 class State
 {
  private:
@@ -15,21 +15,8 @@ class State
   std::set<Statement> statements;
   std::set<State*> successors;
   State(std::set<Statement> statements) : id(max_id++), statements(statements){};
-  void add_sibl(State* s) { this->successors.insert(s); }
-  inline const bool operator<(const State& other) { return this->id < other.id; }
-  void print() const
-  {
-    std::cout << this->id << ":";
-    for (const State* s : this->successors)
-    {
-      std::cout << " " << s->id;
-    }
-    std::cout << " |";
-    for (const Statement& s : statements)
-    {
-      std::cout << " ";
-    }
-    std::cout << std::endl;
-  }
-  bool operator<(const State& o) const { return this->id < o.id; }
+  inline void add_sibl(State* s) { this->successors.insert(s); }
+  inline void add_statement(Statement s) { this->statements.insert(s); }
+  inline bool operator<(const State& other) const { return this->id < other.id; }
 };
+}
